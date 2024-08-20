@@ -43,8 +43,7 @@
 % MUST BE THE LAST IMPORT
 \usepackage{cleveref}
 
-\acrodef{acti}[ACTI]{Automatic Conspiracy Theory Identification}
-\acrodef{llm}[LLM]{Large Language Model}
+\acrodef{gnn}[GNN]{Graph Neural Network}
 
 \newcommand{\meta}[1]{{\color{blue}#1}}
 
@@ -54,7 +53,7 @@
 %
 % and set <dim> to something 5cm or larger.
 
-\title{Large Language Models Project \\
+\title{Graph Neural Network Project \\
 Bertinoro International Spring School (BISS) 2024}
 
 % Author information can be set in various styles:
@@ -97,22 +96,22 @@ Bertinoro International Spring School (BISS) 2024}
 \maketitle
 
 \begin{abstract}
-Several social network platforms - such as Telegram, 4chan, and Parler - do not employ strong moderation
-policies, causing the proliferation of conspiracy theories in many contexts, like COVID-19 or the war
-in Ukraine, and thus diffusing dangerous ideas and generating social harm among their communities.
+
+Online platforms for products and services - such as Spotify, Netflix, and Amazon - 
+host vast product inventories and cater to millions of users. 
+Therefore, it is essential to implement an optimized automated system that effectively 
+recommends products aligned with users' tastes and preferences.  
 %
-In this paper, we present the process to fine-tune two \acp{llm} architectures
-on an Italian dataset from an EVALITA challenge, that requires identifying
-conspiracy theories in posts coming from Telegram.
+\acp{gnn}s GNNs show great promise for this purpose, and in this paper, 
+we introduce a technique to develop a recommender system based on 
+link prediction in heterogeneous graphs, using the MovieLens 100K dataset.
 %
-We provide details about the two adopted architectures, the model configuration and the training
+We provide details about the adopted architecture, the model configuration and the training
 process adopted in our experiments.
 %
 %\meta{Briefly summarise the finding of the experiments}
-Results show that our proposed models outperform both the baseline provided by the organizers on kaggle and 
-the results of the same models without fine-tuning.
+Results show that our proposed model ....
 
-\meta{ACTI-A task / ACTI task / subtask}
 \end{abstract}
 
 \section{Task description}\label{sec:task-description}
