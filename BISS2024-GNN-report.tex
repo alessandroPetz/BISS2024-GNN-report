@@ -139,60 +139,36 @@ demographic-based recommendations, and hybrid recommendation strategies.
 Its moderate size allows for quick experimentation while still providing enough data to test complex algorithms, 
 making it a standard reference in the field.
 
-\section{Related Work}\label{sec:related-work}
-
-\meta{citare gli altri lavori che sono stati fatti per il task ACTI-A}\cite{russo2023actievalita2023overview} 
-\footnote{\url{https://ceur-ws.org/Vol-3473/}}
-
 \section{Architecture overview}\label{sec:architecture-overview}
-To tackle the \ac{acti}-A subtask, we explored two alternative architectures: an encoder-based one, and
-a decoder-based one. Both are detailed in this section.
+In this section is described at high level, the architecture shown in \ref{fig:architecture} used to adress 
+the link prediction task. 
+For this purpose, is utilized \acp{gnn} with heterogeneous graphs 
+as input. \Cref{fig:architecture} Shows the main architecture of the \acp{gnn}. 
+A heterogeneous graph consists of nodes and edges of different types, 
+each with distinct properties, unlike homogeneous graphs where all nodes and edges are 
+uniform. In our case, the heterogeneous graph is composed of two types of nodes: 
+users and movies, connected by a single type of edge that represents the relationship "user-rates-movie."
 
-\subsection{Encoder}
-Encoder-based classifiers, among which BERT \cite{devlin-etal-2019-bert} is the most famous one, require the
-pre-processed input text to undergo a tokenization process, where each sequence of tokens gets also prepended
-with a \texttt{[CLS]} token, left-padded up to the maximum sequence length, or truncated down to it if longer.
-For tasks that require splitting the input in multiple parts, an additional \texttt{[SEP]} token can be used.
+Before feeding the graph into the \acp{gnn}, pre-processing is performed to 
+generate node embeddings. These embeddings create real-valued vectors for each node, 
+capturing both the structural and semantic features of the graph.
 
-Processed by the hidden encoding layers, each applying self-attention and passing the result to a feed-forward
-neural network, input tokens are transformed into contextual embeddings, as shown in \Cref{fig:encoder-block}. Notably, we are only interested in
-the final hidden state corresponding to the \texttt{[CLS]} token, that contains an aggregate representation of
-the entire input sequence, and can be fed to a linear classifier to obtain the probability distribution of the
-input belonging to one of the classes.
+The \acp{gnn} architecture consists of two layers, each followed by a ReLU activation 
+function to introduce non-linearity. The third and final layer is a binary classifier 
+designed to predict the presence or absence of edges, enabling link prediction within the 
+graph.
 
-\begin{figure}
+
+
+\begin{figure*}
   \centering
-  \includegraphics[width=0.8\linewidth]{figures/encoder-block.pdf}
+  \includegraphics[width=1\linewidth]{figures/architecture.pdf}
+
   \caption{
-    An encoder block, composed by a self-attention layer and a feed forward neural network.
+    Architecture
   }
-  \label{fig:encoder-block}
-\end{figure}
-
-\subsection{Decoder}
-The decoder-based architecture we adopted is very similar to the encoder one, employing a tokenizer, followed
-by the decoder model, with a classification layer on top.
-
-For the tokenization process, the main difference when compared to the encoder solution is the absence of the \texttt{[CLS]} token. 
-In fact, due to the auto-regressive nature
-of decoder-only models, the last token is used to make the prediction, instead of the first.
-
-\Cref{fig:decoder-block} shows the input passing through multiple decoder blocks, each composed by a masked 
-self-attention layer and a feed-forward neural network. The masking makes it so each token only attends to previous tokens in the sequence, maintaining a unidirectional context. The final hidden state, corresponding to the last
-token in the sequence, is fed to the linear layer on top of the stack of decoders. Its output dimension is equal to 
-the number of labels of the given task.
-%
-Alternatively, and less commonly, a special token's embedding or an aggregation of all token embeddings can be
-used as input for the classifier.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/decoder-block.pdf}
-  \caption{
-    A decoder block with its masked self-attention layer and feed forward neural network.
-  }
-  \label{fig:decoder-block}
-\end{figure}
+  \label{fig:architecture}
+\end{figure*}
 
 \section{Experimental setup}\label{sec:experimental-setup}
 
