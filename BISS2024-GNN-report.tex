@@ -173,7 +173,7 @@ research avenues focusing on enhancing prediction accuracy, scalability, and ada
 In this section is described at high level, the architecture shown in \ref{fig:architecture} used to adress 
 the link prediction task. 
 For this purpose, is utilized \acp{gnn} with heterogeneous graphs 
-as input. \Cref{fig:architecture} Shows the main architecture of the \acp{gnn}. 
+as input. \Cref{fig:architecture} shows the main architecture of the \acp{gnn}. 
 A heterogeneous graph consists of nodes and edges of different types, 
 each with distinct properties, unlike homogeneous graphs where all nodes and edges are 
 uniform. In our case, the heterogeneous graph is composed of two types of nodes: 
@@ -202,20 +202,21 @@ graph.
 
 \section{Experimental setup}\label{sec:experimental-setup}
 
-\paragraph{Dataset exploration}
+The model we developed is structured into two main components. 
+%
+The first part focuses on generating embeddings from the graph, 
+  utilizing a Graph Neural Network (GNN) architecture to capture the necessary features. 
+%  
+The second part is a classification module that takes these embeddings and predicts the links 
+  between nodes within the graph.
 
-\paragraph{Text cleaning}
+In terms of training, we explored various configurations to optimize the model's performance.
+%
+We began by testing different types of GNN layers, including 'GATv2Conv', 'SAGEConv', and 'GraphConv'. 
+%
+For each of these types, we further experimented with varying the number of convolutional layers, 
+  specifically testing models with 1, 2, 3, and 4 layers to assess their impact on the results.
 
-\subsection{Model configuration}\label{sec:model-config}
-
-\paragraph{Encoder}
-
-
-\paragraph{Decoder}
-
-
-
-\subsection{Training process}\label{sec:training-process}
 
 \bibliography{bibliography}
 
