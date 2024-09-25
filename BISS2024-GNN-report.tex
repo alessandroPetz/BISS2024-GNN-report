@@ -170,24 +170,25 @@ techniques and GNNs to model interactions and predict missing links in various n
 research avenues focusing on enhancing prediction accuracy, scalability, and adaptability in large and dynamic networks.
 
 \section{Architecture overview}\label{sec:architecture-overview}
-In this section is described at high level, the architecture shown in \ref{fig:architecture} used to adress 
-the link prediction task. 
-For this purpose, is utilized \acp{gnn} with heterogeneous graphs 
-as input. \Cref{fig:architecture} shows the main architecture of the \acp{gnn}. 
-A heterogeneous graph consists of nodes and edges of different types, 
-each with distinct properties, unlike homogeneous graphs where all nodes and edges are 
-uniform. In our case, the heterogeneous graph is composed of two types of nodes: 
-users and movies, connected by a single type of edge that represents the relationship "user-rates-movie."
+This section provides an high-level description of the architecture (\Cref{fig:architecture}) adopted.
+For the link prediction task, which involves a network or a graph for describing data, the first choice is to adopt a \ac{gnn} which takes heterogeneous graphs as input. 
+
+Heterogeneous graphs consist of nodes and edges where each one may exhibit different properties, 
+unlike homogeneous graphs where all nodes and edges are uniform.
+In our case, the heterogeneous graph particularly fit the dataset information, 
+thus we adopted two types of nodes: users and movies.
+A user and a movie node can have a relationship between each other, this connection represents that the user has reviewed the movie, and we defined it as "user-rates-movie."
 
 Before feeding the graph into the \acp{gnn}, pre-processing is performed to 
-generate node embeddings. These embeddings create real-valued vectors for each node, 
-capturing both the structural and semantic features of the graph.
+generate node embeddings. 
+These embeddings capture both the structural and semantic features of the graph.
 
-The \acp{gnn} architecture consists of two layers, each followed by a ReLU activation 
-function to introduce non-linearity. The third and final layer is a binary classifier 
-designed to predict the presence or absence of edges, enabling link prediction within the 
+The \acp{gnn} architecture is composed of \ac{gnn} layers, each one followed by a ReLU activation 
+function to introduce non-linearity. The final layer is a binary classifier 
+aimed to predict the presence or absence of edges, enabling link prediction within the 
 graph.
 
+The most performing architecture is then chosen among different combination of number of \ac{gnn} layers and their type, described in \Cref{sec:experimental-setup}.
 
 
 \begin{figure*}
