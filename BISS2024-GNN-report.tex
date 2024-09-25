@@ -30,18 +30,20 @@
 % However, it will improve the aesthetics of text in
 % the typewriter font.
 \usepackage{inconsolata}
-
+\usepackage{url}
 %Including images in your LaTeX document requires adding
 %additional package(s)
 \usepackage{graphicx}
 \usepackage{subcaption}
-
+\usepackage{multicol}
+\usepackage{multirow}
 \usepackage{acronym}
 \usepackage[inline]{enumitem}
 \usepackage{booktabs}
 \usepackage{tabularx}
 % MUST BE THE LAST IMPORT
 \usepackage{cleveref}
+
 
 \acrodef{gnn}[GNN]{Graph Neural Network}
 
@@ -108,9 +110,7 @@ link prediction in heterogeneous graphs, using the MovieLens 100K dataset.
 %
 We provide details about the adopted architecture, the model configuration and the training
 process adopted in our experiments.
-%
-%\meta{Briefly summarise the finding of the experiments}
-Results show that our proposed model ....
+
 
 \end{abstract}
 
@@ -212,10 +212,115 @@ The second part is a classification module that takes these embeddings and predi
 
 In terms of training, we explored various configurations to optimize the model's performance.
 %
-We began by testing different types of GNN layers, including 'GATv2Conv', 'SAGEConv', and 'GraphConv'. 
+We began by testing different types of GNN layers, including \texttt{GATv2Conv}, \texttt{SAGEConv}, and \texttt{GraphConv}. 
 %
 For each of these types, we further experimented with varying the number of convolutional layers, 
   specifically testing models with 1, 2, 3, and 4 layers to assess their impact on the results.
+
+\section{Results}\label{sec:resutls}
+
+\begin{table}
+  \centering
+  \begin{tabular}{|l|c|l|} 
+  \hline
+  \textbf{Layer Type}                  & \multicolumn{1}{l|}{\textbf{Number of Layers}} & \textbf{AUC}  \\ 
+  \hline
+  \multirow{4}{*}{\texttt{GraphConv }} & 1                                              & 0.83          \\ 
+  \cline{2-3}
+                                       & 2                                              & 0.79          \\ 
+  \cline{2-3}
+                                       & 3                                              & 0.75          \\ 
+  \cline{2-3}
+                                       & 4                                              & 0.60          \\ 
+  \hline
+  \multirow{4}{*}{\texttt{SAGEConv}}   & 1                                              & 0.90          \\ 
+  \cline{2-3}
+                                       & 2                                              & 0.93          \\ 
+  \cline{2-3}
+                                       & 3                                              & 0.93          \\ 
+  \cline{2-3}
+                                       & 4                                              & 0.94          \\ 
+  \hline
+  \multirow{4}{*}{\texttt{GATv2Conv}}  & 1                                              & 0.91          \\ 
+  \cline{2-3}
+                                       & 2                                              & 0.91          \\ 
+  \cline{2-3}
+                                       & 3                                              & 0.86          \\ 
+  \cline{2-3}
+                                       & 4                                              & 0.90          \\
+  \hline
+  \end{tabular}
+
+  \caption{Test results for each experiment.}
+  \label{tab:results}
+\end{table}
+
+
+Among the three layers analyzed, \texttt{GraphConv} is the simplest. 
+%
+Its primary operation consists of averaging the features of neighboring nodes followed by the application of a linear transformation. 
+%
+From the results (\Cref{tab:results}), it can be observed that training with this layer leads to the most unstable performance (\Cref{fig:graph2}) among all 
+%
+the experiments conducted, with the lowest AUC scores as well.
+
+In contrast, \texttt{SAGEConv} and \texttt{GATv2Conv} represent more advanced layer types. 
+%
+The results demonstrate that both layers achieve comparable AUC scores. 
+%
+However, \texttt{SAGEConv} shows a slightly higher AUC and tends to be more stable during the training process (\Cref{fig:sage2}).
+
+When considering the impact of the number of layers, \texttt{SAGEConv} remains stable as the number of 
+%
+layers increases, but the gains in AUC are minimal. 
+%
+This suggests that it is possible to find a balance between model performance and complexity by using only two layers. 
+%
+On the other hand, \texttt{GATv2Conv} performs better with fewer layers, but its performance degrades when the number 
+%
+of layers is increased to three or four (\Cref{fig:gat2,fig:gat4}).
+
+
+\begin{figure*}
+  \centering
+  \begin{subfigure}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{figures/charts/Graph/auc-layerType_GraphConv-numLayers_2.pdf}
+      \caption{GraphConv with 2 layers.}
+      \label{fig:graph2}
+  \end{subfigure}
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/charts/Sage/auc-layerType_SAGEConv-numLayers_2.pdf}
+    \caption{SAGEConv with 2 layers.}
+    \label{fig:sage2}
+  \end{subfigure}
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/charts/GAT/auc-layerType_GATv2Conv-numLayers_2.pdf}
+    \caption{GATv2Conv with 2 layers.}
+    \label{fig:gat2}
+  \end{subfigure}
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/charts/GAT/auc-layerType_GATv2Conv-numLayers_4.pdf}
+    \caption{GATv2Conv with 4 layers.}
+    \label{fig:gat4}
+  \end{subfigure}
+  \caption{AUC score during training.}
+  \label{fig:metrics}
+\end{figure*}
+
+\section{Reproducibility}
+All the experiments conducted are available 
+%
+online\footnote{\url{https://tinyurl.com/GNN-BISS-Project}} 
+%
+and can be executed by anyone. 
+%
+While we have included only a selection of charts in this report, running the 
+%
+experiments will automatically generate and export all charts to the \texttt{charts} folder.
 
 
 \bibliography{bibliography}
