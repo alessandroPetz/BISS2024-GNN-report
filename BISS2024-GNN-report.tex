@@ -125,19 +125,13 @@ enabling the system to recommend it to them, or exclude it if it's unlikely to m
 
 
 \section{Dataset description}\label{sec:dataset-description}
-The Movielens-100k dataset \cite{harper2015movielens} is a widely-used benchmark dataset in the field of recommender systems and machine learning research. 
-Released by the GroupLens Research lab, the dataset contains 100,000 ratings from 943 users on 1,682 movies, 
-captured between September 19, 1997, and April 22, 1998. 
+The Movielens dataset \cite{harper2015movielens} is a widely-used benchmark dataset in the field of recommender systems and machine learning research. 
+Released by the GroupLens Research lab, the dataset contains around 100,000 ratings from 610 users on 9,742 movies, 
+captured between March 29, 1996 and September 24, 2018. 
 Each user in the dataset has rated at least 20 movies, with ratings ranging from 1 to 5, where 1 indicates the lowest rating and 5 the highest.
-In addition to the ratings, the dataset includes demographic information for each user, 
-such as age, gender, occupation, and zip code, as well as basic metadata for each movie, including title, release year, and genre. 
-The dataset is structured into several files, with the primary ones being u.data (which contains the actual ratings), 
-u.user (which contains user information), and u.item (which contains movie information).
-The Movielens-100k dataset is particularly valuable for researchers because of its size and the inclusion of both user and item metadata, 
-enabling the exploration of various collaborative filtering techniques, 
-demographic-based recommendations, and hybrid recommendation strategies. 
-Its moderate size allows for quick experimentation while still providing enough data to test complex algorithms, 
-making it a standard reference in the field.
+Each user is represented by an id, and no other information is provided for them, while for movies it provides additional information such as the title, genre and release year.
+The dataset is structured into several files: \texttt{links.csv}, \texttt{movies.csv}, \texttt{ratings.csv}, and \texttt{tags.csv}.
+The Movielens dataset is particularly valuable for researchers because of its size.
 
 \section{Related Work}\label{sec:related-work}
 
