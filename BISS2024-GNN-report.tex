@@ -41,6 +41,7 @@
 \usepackage[inline]{enumitem}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{dblfloatfix}
 % MUST BE THE LAST IMPORT
 \usepackage{cleveref}
 
@@ -109,7 +110,7 @@ we introduce a technique to develop a recommender system based on
 link prediction in heterogeneous graphs, using the MovieLens 100K dataset.
 %
 We provide details about the adopted architecture, the model configuration and the training
-process adopted in our experiments.
+process followed in our experiments.
 
 
 \end{abstract}
@@ -119,39 +120,49 @@ Link prediction tasks involve predicting the existence, formation,
 or strength of a connection (or link) between two nodes in a network or graph. 
 These tasks are crucial in various domains where understanding or forecasting the relationships 
 between entities is important. 
-In this paper we present a model based on a link prediction to implement a recommender system of movies for users.
-The goal is to predict whether a user will likely enjoy a film they haven't yet seen, 
+In this paper, we present a recommendation system that exploits link prediction to recommend movies to its users.
+The goal is to predict whether a user is likely to enjoy a film they haven't yet seen, 
 enabling the system to recommend it to them, or exclude it if it's unlikely to match their preferences.
 
 
 \section{Dataset description}\label{sec:dataset-description}
-The Movielens dataset \cite{harper2015movielens} is a widely-used benchmark dataset in the field of recommender systems and machine learning research. 
+The Movielens dataset \cite{harper2015movielens} is a widely used benchmark dataset in the field of recommender systems and machine learning research. 
 Released by the GroupLens Research lab, the dataset contains around 100,000 ratings from 610 users on 9,742 movies, 
-captured between March 29, 1996 and September 24, 2018. 
+captured between March 29, 1996, and September 24, 2018. 
 Each user in the dataset has rated at least 20 movies, with ratings ranging from 1 to 5, where 1 indicates the lowest rating and 5 the highest.
-Each user is represented by an id, and no other information is provided for them, while for movies it provides additional information such as the title, genre and release year.
-The dataset is structured into several files: \texttt{links.csv}, \texttt{movies.csv}, \texttt{ratings.csv}, and \texttt{tags.csv}.
+Each user is represented by an ID, and no other information is provided about them, while movies have additional information such as title, genres, and release year. Notably, the genres of a movie are all contained in a single string, and use a pipe character ``\texttt{|}'' as a separator. Furthermore, the year of release is stored between parentheses at the end of the movie title and is absent in some movies.
+The dataset is structured into the following files: \texttt{links.csv}, \texttt{movies.csv}, \texttt{ratings.csv}, and \texttt{tags.csv}.
 The Movielens dataset is particularly valuable for researchers because of its size.
+
+\begin{figure*}[b]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/architecture.pdf}
+
+  \caption{
+    Architecture
+  }
+  \label{fig:architecture}
+\end{figure*}
 
 \section{Related Work}\label{sec:related-work}
 
-Link prediction and recommender systems are interrelated fields that focus on predicting missing links in networks 
-and recommending items to users, respectively. In link prediction, early approaches relied on measuring the similarity 
-between node pairs using metrics such as Common Neighbors, Jaccard Coefficient, and the Adamic-Adar index 
+Link prediction and recommender systems are interrelated fields that focus, respectively, on predicting missing links in networks 
+and recommending items to users. Early link prediction approaches relied on measuring the similarity 
+between pairs of nodes using metrics such as Common Neighbors, Jaccard Coefficient, and the Adamic-Adar index 
 \cite{liben2003link}. These heuristics exploit the topology of the network to estimate the likelihood 
 of a link's existence based on local neighborhood structures.
 
 Probabilistic models and matrix factorization techniques were later introduced to capture more complex 
 patterns in network structures \cite{koren2009matrix}. With the rise of deep learning, \acp{gnn} have become 
 prominent for link prediction tasks. Methods like Graph Convolutional Networks (GCNs) and 
-Graph Autoencoders learn node embeddings that encapsulate both local and global network information, 
+Graph Autoencoders can learn node embeddings that encapsulate both local and global network information, 
 leading to improved prediction accuracy \cite{kipf2016semi}.
 
 Recommender systems have evolved from traditional collaborative filtering techniques to advanced models 
 incorporating deep learning and network information. Collaborative filtering methods, such as user-based 
-and item-based approaches, utilize user-item interaction matrices to suggest relevant items [Sarwar et al., 2001]. 
-Matrix factorization methods like Singular Value Decomposition (SVD) project users and items into a latent feature 
-space, effectively handling large-scale recommendation tasks \cite{sarwar2001item}.
+and item-based approaches, utilize user-item interaction matrices to suggest relevant items. 
+Matrix factorization methods, like Singular Value Decomposition (SVD), project users and items into a latent 
+feature space, effectively handling large-scale recommendation tasks \cite{sarwar2001item}.
 
 The integration of social network data into recommender systems has led to the development of social recommender 
 systems, which leverage social relationships to enhance recommendation accuracy \cite{jamali2010matrix}. 
@@ -164,18 +175,21 @@ techniques and GNNs to model interactions and predict missing links in various n
 research avenues focusing on enhancing prediction accuracy, scalability, and adaptability in large and dynamic networks.
 
 \section{Architecture overview}\label{sec:architecture-overview}
-This section provides an high-level description of the architecture (\Cref{fig:architecture}) adopted.
+
+This section provides an high-level description of the adopted architecture (\Cref{fig:architecture}).
 For the link prediction task, which involves a network or a graph for describing data, the first choice is to adopt a \ac{gnn} which takes heterogeneous graphs as input. 
 
-Heterogeneous graphs consist of nodes and edges where each one may exhibit different properties, 
-unlike homogeneous graphs where all nodes and edges are uniform.
-In our case, the heterogeneous graph particularly fit the dataset information, 
-thus we adopted two types of nodes: users and movies.
-A user and a movie node can have a relationship between each other, this connection represents that the user has reviewed the movie, and we defined it as "user-rates-movie."
+Heterogeneous graphs consist of different types of nodes and edges, 
+unlike homogeneous graphs where all nodes and edges are uniform and have the same properties.
+In our case, the heterogeneous graph particularly fits the dataset information, 
+as we have two types of nodes: users and movies.
+A user and a movie node can have a relationship between each other, representing that the user has reviewed the movie, and we named it "user-rates-movie".
 
 Before feeding the graph into the \acp{gnn}, pre-processing is performed to 
-generate node embeddings. 
+generate node embeddings.
 These embeddings capture both the structural and semantic features of the graph.
+We split movie genres in 20 separate features (one for each genre in the dataset). Each movie of a certain genre will have 1 corresponding to that genre's feature, or 0 if it doesn't belong to the genre.
+As for the year, we used a regular expression to extract it from parentheses and use it as a feature.
 
 The \acp{gnn} architecture is composed of \ac{gnn} layers, each one followed by a ReLU activation 
 function to introduce non-linearity. The final layer is a binary classifier 
@@ -184,22 +198,11 @@ graph.
 
 The most performing architecture is then chosen among different combination of number of \ac{gnn} layers and their type, described in \Cref{sec:experimental-setup}.
 
-
-\begin{figure*}
-  \centering
-  \includegraphics[width=1\linewidth]{figures/architecture.pdf}
-
-  \caption{
-    Architecture
-  }
-  \label{fig:architecture}
-\end{figure*}
-
 \section{Experimental setup}\label{sec:experimental-setup}
 
-The model we developed is structured into two main components. 
+The model we developed is structured in two main components. 
 %
-The first part focuses on generating embeddings from the graph, 
+The first one focuses on generating embeddings from the graph, 
   utilizing a Graph Neural Network (GNN) architecture to capture the necessary features. 
 %  
 The second part is a classification module that takes these embeddings and predicts the links 
@@ -209,47 +212,10 @@ In terms of training, we explored various configurations to optimize the model's
 %
 We began by testing different types of GNN layers, including \texttt{GATv2Conv}, \texttt{SAGEConv}, and \texttt{GraphConv}. 
 %
-For each of these types, we further experimented with varying the number of convolutional layers, 
+For each of these types, we further experimented with a varying the number of convolutional layers, 
   specifically testing models with 1, 2, 3, and 4 layers to assess their impact on the results.
 
 \section{Results}\label{sec:resutls}
-
-\begin{table}
-  \centering
-  \begin{tabular}{|l|c|l|} 
-  \hline
-  \textbf{Layer Type}                  & \multicolumn{1}{l|}{\textbf{Number of Layers}} & \textbf{AUC}  \\ 
-  \hline
-  \multirow{4}{*}{\texttt{GraphConv }} & 1                                              & 0.83          \\ 
-  \cline{2-3}
-                                       & 2                                              & 0.79          \\ 
-  \cline{2-3}
-                                       & 3                                              & 0.75          \\ 
-  \cline{2-3}
-                                       & 4                                              & 0.60          \\ 
-  \hline
-  \multirow{4}{*}{\texttt{SAGEConv}}   & 1                                              & 0.90          \\ 
-  \cline{2-3}
-                                       & 2                                              & 0.93          \\ 
-  \cline{2-3}
-                                       & 3                                              & 0.93          \\ 
-  \cline{2-3}
-                                       & 4                                              & 0.94          \\ 
-  \hline
-  \multirow{4}{*}{\texttt{GATv2Conv}}  & 1                                              & 0.91          \\ 
-  \cline{2-3}
-                                       & 2                                              & 0.91          \\ 
-  \cline{2-3}
-                                       & 3                                              & 0.86          \\ 
-  \cline{2-3}
-                                       & 4                                              & 0.90          \\
-  \hline
-  \end{tabular}
-
-  \caption{Test results for each experiment.}
-  \label{tab:results}
-\end{table}
-
 
 Among the three layers analyzed, \texttt{GraphConv} is the simplest. 
 %
@@ -274,7 +240,6 @@ This suggests that it is possible to find a balance between model performance an
 On the other hand, \texttt{GATv2Conv} performs better with fewer layers, but its performance degrades when the number 
 %
 of layers is increased to three or four (\Cref{fig:gat2,fig:gat4}).
-
 
 \begin{figure*}
   \centering
@@ -316,6 +281,42 @@ and can be executed by anyone.
 While we have included only a selection of charts in this report, running the 
 %
 experiments will automatically generate and export all charts to the \texttt{charts} folder.
+
+\begin{table}
+  \centering
+  \begin{tabular}{|l|c|l|} 
+  \hline
+  \textbf{Layer Type}                  & \multicolumn{1}{l|}{\textbf{Number of Layers}} & \textbf{AUC}  \\ 
+  \hline
+  \multirow{4}{*}{\texttt{GraphConv }} & 1                                              & 0.83          \\ 
+  \cline{2-3}
+                                       & 2                                              & 0.79          \\ 
+  \cline{2-3}
+                                       & 3                                              & 0.75          \\ 
+  \cline{2-3}
+                                       & 4                                              & 0.60          \\ 
+  \hline
+  \multirow{4}{*}{\texttt{SAGEConv}}   & 1                                              & 0.90          \\ 
+  \cline{2-3}
+                                       & 2                                              & 0.93          \\ 
+  \cline{2-3}
+                                       & 3                                              & 0.93          \\ 
+  \cline{2-3}
+                                       & 4                                              & 0.94          \\ 
+  \hline
+  \multirow{4}{*}{\texttt{GATv2Conv}}  & 1                                              & 0.91          \\ 
+  \cline{2-3}
+                                       & 2                                              & 0.91          \\ 
+  \cline{2-3}
+                                       & 3                                              & 0.86          \\ 
+  \cline{2-3}
+                                       & 4                                              & 0.90          \\
+  \hline
+  \end{tabular}
+
+  \caption{Test results for each experiment.}
+  \label{tab:results}
+\end{table}
 
 
 \bibliography{bibliography}
